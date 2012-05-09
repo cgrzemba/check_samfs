@@ -1,3 +1,5 @@
+This project provides a tool to read the SamFS faultlog.bin an reports the active faults. This tool is intended for use as nrpe plugin.
+
 Build
 
 For build you need the header files for SamFS from 
