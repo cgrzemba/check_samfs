@@ -1,0 +1,20 @@
+SRC = check_samfs.c
+CFLAGS = @samfs_inc@
+LDFLAGS = -L/opt/SUNWsamfs/lib -lfsmgmt -lcsn -L/usr/sfw/lib -lssl -R/opt/SUNWsamfs/lib -R/usr/sfw/lib
+BIN = check_samfs
+
+all: $(BIN)
+
+$(BIN): src/$(SRC)
+	$(CC) $(CFLAGS) $(LDFLAGS) src/$(SRC) -o $(BIN)
+
+install:
+	ginstall -m 755 $(BIN) $(DESTDIR)/$(prefix)/nagios/libexec
+
+clean:
+	rm -f $(BIN)
+
+distclean: clean
+	rm -rf autom4te.cache
+	rm -f *.log
+	rm -f config.status

@@ -1,0 +1,12 @@
+Build
+
+For build you need the header files for SamFS from 
+
+$ hg ssh://anon@hg.opensolaris.org/hg/samqfs/samqfs
+
+and the libs of the samfs core package SUNWsamfsr
+
+build with:
+$ ./configure --with-samfs-inc=<path to samfs source include dir>
+$ make
+$ make install
