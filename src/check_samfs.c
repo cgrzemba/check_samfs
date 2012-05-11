@@ -2,20 +2,26 @@
  *
  * Main File check_samfs
  * Written By: Carsten Grzemba (grzemba@contac-dt.de)
- * Last Modified: 09-05-2012
+ * Last Modified: 11-05-2012
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * # CDDL HEADER START
+ * #
+ * # The contents of this file are subject to the terms of the
+ * # Common Development and Distribution License (the "License").
+ * # You may not use this file except in compliance with the License.
+ * #
+ * # You can obtain a copy of the license at pkg/OPENSOLARIS.LICENSE
+ * # or http://www.opensolaris.org/os/licensing.
+ * # See the License for the specific language governing permissions
+ * # and limitations under the License.
+ * #
+ * # When distributing Covered Code, include this CDDL HEADER in each
+ * # file and include the License file at pkg/OPENSOLARIS.LICENSE.
+ * # If applicable, add the following below this CDDL HEADER, with the
+ * # fields enclosed by brackets "[]" replaced with your own identifying
+ * # information: Portions Copyright [yyyy] [name of copyright owner]
+ * #
+ * # CDDL HEADER END
  ************************************************************************/
 
 #pragma ident	"$Revision: 1.00 $"
