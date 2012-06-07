@@ -11,6 +11,7 @@ $(BIN): src/$(SRC)
 	$(CC) $(CFLAGS) $(LDFLAGS) src/$(SRC) -o $(BIN)
 
 install:
+	ginstall -d $(DESTDIR)/$(prefix)/nagios/libexec
 	ginstall -m 755 $(BIN) $(DESTDIR)/$(prefix)/nagios/libexec
 
 clean:
