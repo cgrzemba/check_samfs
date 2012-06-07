@@ -34,6 +34,7 @@ AC_ARG_WITH(samfs-inc, AS_HELP_STRING([--with-samfs-inc=PATH],[SamFS pub include
   AC_MSG_ERROR([option --with-samfs-inc mandatory])
 ])
 AC_SUBST([samfs_inc])
+AC_SUBST([prefix])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
