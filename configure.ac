@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([src/check_samfs.c])
 
@@ -34,6 +34,7 @@ AC_ARG_WITH(samfs-inc, AS_HELP_STRING([--with-samfs-inc=PATH],[SamFS pub include
   AC_MSG_ERROR([option --with-samfs-inc mandatory])
 ])
 AC_SUBST([samfs_inc])
+AC_SUBST([prefix])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
