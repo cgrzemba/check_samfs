@@ -6,7 +6,7 @@ For build you need the header files for SamFS from
 
 $ hg clone ssh://anon@hg.opensolaris.org/hg/samqfs/samqfs
 
-and the libs of the samfs core package SUNWsamfsr
+and the libs of the samfs packages SUNWsamfsr and SUNWsamfsu
 
 build with:
 $ ./configure --with-samfs-inc=<path to samfs source include dir>

@@ -1,6 +1,7 @@
 SRC = check_samfs.c
 CFLAGS = @samfs_inc@
-LDFLAGS = -L/opt/SUNWsamfs/lib -lfsmgmt -lcsn -lsamut -lsam -lsamcat -L /usr/lib/fs/samfs -l samconf -L/usr/sfw/lib -lssl -R/opt/SUNWsamfs/lib -R/usr/lib/fs/samfs -R/usr/sfw/lib
+LDFLAGS = -L/opt/SUNWsamfs/lib -lfsmgmt -lcsn -L /usr/lib/fs/samfs -l samconf -L/usr/sfw/lib -lssl \
+ -R/opt/SUNWsamfs/lib -R/usr/lib/fs/samfs -R/usr/sfw/lib
 BIN = check_samfs
 
 all: $(BIN)
