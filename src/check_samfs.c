@@ -28,6 +28,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "pub/mgmt/faults.h"
 #include "pub/mgmt/error.h"
 
@@ -36,7 +42,7 @@
 int
 main (int argc,char *argv[])
 {
-	int ret = 0;
+	int ret = 3,fdis;
 	ctx_t ctx_d;
 	int num_critical_faults = 0;
 	int num_major_faults = 0;
@@ -44,18 +50,25 @@ main (int argc,char *argv[])
 	char log_msg[MSG_BUFF_SIZE];
         int bufspace = MSG_BUFF_SIZE;
 	int cnt=0;
-	
-	
+    struct	stat	buf;
 	
 	sqm_lst_t		*lst = NULL;
 	node_t 		    *node = NULL;
 	fault_attr_t	*fault_attr = NULL;
 	
-	
+    if ((fdis=open(FAULTLOG,O_RDONLY)) < 0) {
+        if (errno == ENOENT) { 
+            fprintf(stderr,"no file %s\n",FAULTLOG);
+            return 3;
+        }
+        fprintf(stderr,"access %s failed: ",FAULTLOG,errno);perror("");
+        return (3);
+	}
+	close(fdis);
  
 	if (get_all_faults(&ctx_d, &lst) != 0) {
 		/* samerrmsg and samerrno is already populated */
-		fprintf(stderr, "get fault summary failed: %s", samerrmsg);
+		fprintf(stderr, "get fault summary failed: %s\n", samerrmsg);
 		return (3);
 	}
 
@@ -83,8 +96,11 @@ main (int argc,char *argv[])
 	}
 	lst_free_deep(lst);
 	
-	if ( num_major_faults == 0 && num_minor_faults == 0 &&  num_critical_faults == 0 )
+	if ( num_major_faults == 0 && num_minor_faults == 0 &&  num_critical_faults == 0 ){
+	    ret = 0;
 	    printf( "SamFS Ok - no faults\n" );
+	    return (ret);
+	}
 	if ( num_minor_faults > 0){
 	    ret = 1;
 	    printf("SamFS Warning - minor faults=%d; %s\n", num_minor_faults, log_msg);

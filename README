@@ -6,9 +6,16 @@ For build you need the header files for SamFS from
 
 $ hg clone ssh://anon@hg.opensolaris.org/hg/samqfs/samqfs
 
-and the libs of the samfs core package SUNWsamfsr
+and the libs of the samfs packages SUNWsamfsr and SUNWsamfsu
 
 build with:
 $ ./configure --with-samfs-inc=<path to samfs source include dir>
 $ make
 $ make install
+
+Be sure that the nagios user can access the fault log! 
+One solution is add the nagios user to group sys:
+
+# usermod -G sys nagios
+
+and restart nrpe service
