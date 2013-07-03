@@ -2,7 +2,10 @@ This project provides a tool to read the SamFS faultlog.bin an reports the activ
 
 Build
 
-For build you need the header files for SamFS from 
+Becasue the header 
+pub/mgmt/faults.h
+pub/mgmt/error.h
+are not content of the current public API you need for build the header files for SamFS from 
 
 $ hg clone http://hg.berlios.de/repos/samqfs 
 
