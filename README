@@ -4,7 +4,7 @@ Build
 
 For build you need the header files for SamFS from 
 
-$ hg clone ssh://anon@hg.opensolaris.org/hg/samqfs/samqfs
+$ hg clone http://hg.berlios.de/repos/samqfs 
 
 and the libs of the samfs packages SUNWsamfsr and SUNWsamfsu
 
