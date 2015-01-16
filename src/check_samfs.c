@@ -50,7 +50,6 @@ main (int argc,char *argv[])
 	char log_msg[MSG_BUFF_SIZE];
         int bufspace = MSG_BUFF_SIZE;
 	int cnt=0;
-    struct	stat	buf;
 	
 	sqm_lst_t		*lst = NULL;
 	node_t 		    *node = NULL;
