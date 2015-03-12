@@ -2,23 +2,19 @@ This project provides a tool to read the SamFS faultlog.bin an reports the activ
 
 Build
 
-Becasue the header 
-pub/mgmt/faults.h
-pub/mgmt/error.h
-are not content of the current public API you need for build the header files for SamFS from 
-
-$ hg clone http://hg.berlios.de/repos/samqfs 
-
-and the libs of the samfs packages SUNWsamfsr and SUNWsamfsu
+Build on a host where SamFS, C-Compiler and GNU make is installed
 
 build with:
-$ ./configure --with-samfs-inc=<path to samfs source include dir>
-$ make
-$ make install
+$ gmake
+$ gmake install
 
 Be sure that the nagios user can access the fault log! 
 One solution is add the nagios user to group sys:
 
 # usermod -G sys nagios
 
+add a line in nrpe.cfg like this
+command[check_samfs]=/opt/csw/libexec/nagios-plugins/check_samfs
+
 and restart nrpe service
+
