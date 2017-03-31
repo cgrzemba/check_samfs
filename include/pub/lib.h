@@ -28,17 +28,12 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
 #ifndef	SAMLIB_H
 #define	SAMLIB_H
-
-#ifdef sun
-#pragma ident "$Revision: 1.19 $"
-#endif
 
 #ifdef linux
 #include <sam/linux_types.h>	/* uint_t */
@@ -60,6 +55,7 @@ int sam_cancelstage(const char *name);
 char *sam_devstr(uint_t p);
 int sam_release(const char *name, const char *opns);
 int sam_ssum(const char *name, const char *opns);
+int sam_getdigest(const char *name, char *digest, int length);
 int sam_stage(const char *name, const char *opns);
 int sam_setfa(const char *name, const char *opns);
 int sam_segment(const char *name, const char *opns);

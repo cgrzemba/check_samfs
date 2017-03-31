@@ -28,17 +28,12 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
 #ifndef SAMFS_H_RPCGEN
 #define	SAMFS_H_RPCGEN
-
-#ifdef sun
-#pragma ident "$Revision: 1.18 $"
-#endif
 
 #include <rpc/rpc.h>
 #include <sys/types.h>
@@ -52,7 +47,15 @@ extern "C" {
 #endif
 
 #define	MAX_VSN 32
-#define	MAX_OPTS 24
+#define	MAX_OPTS 256
+
+/*
+ * Following is recommended string length for containing the message-digest
+ * from the 'sam_getdigest()' call.  See the 'sam_getdigest(3)' man page for
+ * more information.
+ */
+
+#define	MAX_GETDIGEST_LENGTH 255
 
 struct filecmd {
 	char *filename;
@@ -64,11 +67,25 @@ struct statcmd {
 	int size;
 };
 
+struct digest_arguments {
+	char *filename;
+	int size;
+};
+typedef struct digest_arguments digest_arguments;
+
+struct digest_result {
+	int result;
+	int size;
+	char *digest;
+};
+typedef struct digest_result digest_result;
+
 typedef struct filecmd filecmd;
 
 typedef struct statcmd statcmd;
 
 typedef struct sam_stat samstat_t;
+
 
 struct sam_st {
 	int result;
@@ -99,6 +116,10 @@ extern  int *samstage_1();
 extern  int *samsetfa_1();
 #define	samsegment ((unsigned long)(7))
 extern  int *samsegment_1();
+#define	samssum ((unsigned long)(8))
+extern  int *samssum_1();
+#define	samgetdigest ((unsigned long)(9))
+extern  digest_result *samgetdigest_1();
 extern int samfs_1_freeresult();
 
 /* the xdr functions */
@@ -106,6 +127,8 @@ extern bool_t xdr_filecmd();
 extern bool_t xdr_statcmd();
 extern bool_t xdr_samstat_t();
 extern bool_t xdr_sam_st();
+extern bool_t xdr_digest_arguments();
+extern bool_t xdr_digest_result();
 
 #ifndef	SAM_LIB
 extern	CLIENT	*clnt;
@@ -116,7 +139,10 @@ extern	CLIENT	*clnt;
 
 /* Functions. */
 int sam_initrpc(char *rpchost);
+int sam_initrpc_timeout(char *rpchost, int seconds);
 int sam_closerpc(void);
+
+int sam_settimeout(int seconds);
 
 #ifdef  __cplusplus
 }

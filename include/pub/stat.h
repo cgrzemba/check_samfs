@@ -31,8 +31,7 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
@@ -40,9 +39,6 @@
 #ifndef	SAM_STAT_H
 #define	SAM_STAT_H
 
-#ifdef sun
-#pragma ident "$Revision: 1.46 $"
-#endif
 
 #ifdef linux
 #include <sam/linux_types.h>	/* u_longlong_t */
@@ -60,7 +56,7 @@ extern "C" {
  * sys/stat.h must be included before sam/stat.h.
  * The following is provided to avoid compilation errors:
  */
-#if defined(_SYS_STAT_H) || defined(_LINUX_STAT_H)
+#if defined(_SYS_STAT_H) || defined(_LINUX_STAT_H) || defined(_BITS_STAT_H)
 #undef st_atime
 #undef st_mtime
 #undef st_ctime
@@ -180,7 +176,13 @@ struct sam_stat {
 	uint_t 		admin_id;
 	/* Allocate ahead size set by setfa -A */
 	uint_t 		allocahead;
-	uint_t		obj_depth;	/* Object stripe depth in kilobytes */
+	/*
+	 * Object stripe depth in kilobytes.
+	 * If this field is used only for OSD support then it should be removed
+	 * once it is determined that removing it is safe.  Update the man page
+	 * for sam_stat(3) when this is done.
+	 */
+	uint_t		obj_depth;
 	/* 128 bit checksum */
 	u_longlong_t 	cs_val[2];
 	/* WORM retention period start and duration. */
@@ -435,7 +437,6 @@ struct sam_section {	/* For each archive copy volume section */
 #define	SS_ISCSUSE(attr)	(((attr)&SS_CSUSE) != 0)
 #define	SS_ISCSVAL(attr)	(((attr)&SS_CSVAL) != 0)
 #define	SS_ISDIRECTIO(attr)  	(((attr)&SS_DIRECTIO) != 0)
-#define	SS_ISSTAGE_M(attr)   	(((attr)&SS_STAGE_M) != 0)
 #define	SS_ISWORM(attr)		(((attr)&SS_WORM) != 0)
 #define	SS_ISREADONLY(attr)  	(((attr)&SS_READONLY) != 0)
 #define	SS_ISSETFA_G(attr)   	(((attr)&SS_SETFA_G) != 0)
@@ -476,6 +477,7 @@ struct sam_section {	/* For each archive copy volume section */
 
 int sam_stat(const char *path, struct sam_stat *buf, size_t bufsize);
 int sam_lstat(const char *path, struct sam_stat *buf, size_t bufsize);
+int sam_fstat(const int fd, struct sam_stat *buf, size_t bufsize);
 int sam_vsn_stat(const char *path, int copy, struct sam_section *buf,
 	size_t bufsize);
 int sam_segment_vsn_stat(const char *path, int copy, int segment_index,

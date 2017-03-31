@@ -1,7 +1,7 @@
 /*
- * listio.h - QFS listio definitions.
+ *	listio.h - SAM-FS ioctl listio call.
  *
- * Defines the QFS listio input structure and functions.
+ *	Type definitions for the SAM-FS ioctl listio.
  *
  */
 
@@ -28,40 +28,41 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
-
-#ifndef	QFS_LISTIO_H
-#define	QFS_LISTIO_H
+#ifndef	_SAM_FS_LISTIO_H
+#define	_SAM_FS_LISTIO_H
 
 #ifdef sun
-#pragma ident "$Revision: 1.12 $"
+#pragma ident "$Revision: 1.14 $"
 #endif
 
-#include <sys/types.h>
+#include	<sam/fioctl.h>
 
-#ifdef  __cplusplus
-extern "C" {
-#endif
+/*
+ * ----- Listio list of outstanding calls. This call exists until the I/O
+ * completes. Chained through the incore inode.
+ */
+
+struct sam_listio_call {
+	struct sam_listio_call *nextp;		/* Next call if one */
+	kmutex_t		lio_mutex;	/* Mtx for this struct */
+	struct sam_listio	listio;		/* User's arguments */
+	int		mem_cnt;	/* Memory array size */
+	int		file_cnt;	/* File array size */
+	caddr_t		*mem_addr;	/* Memory array: addresses */
+	size_t		*mem_count;	/*		: counts */
+	offset_t	*file_off;	/* File array: offsets */
+	offset_t	*file_len;	/*	   : lengths */
+	void		*handle;	/* Wait handle */
+	pid_t		pid;		/* Caller pid */
+	int32_t		io_count;	/* Outstanding count of I/Os */
+	int32_t		error;		/* Error */
+	boolean_t	waiting;	/* TRUE if process is waiting */
+	ksema_t		cmd_sema;	/* Held until cmd completes */
+};
 
 
-typedef int64_t qfs_lio_handle_t;
-int qfs_lio_init(qfs_lio_handle_t *hdl);
-int qfs_lio_write(int fd,
-		int mem_list_count, void **mem_addr, size_t *mem_count,
-		int file_list_count, offset_t *file_off, offset_t *file_len,
-		qfs_lio_handle_t *hdl);
-int qfs_lio_read(int fd,
-		int mem_list_count, void **mem_addr, size_t *mem_count,
-		int file_list_count, offset_t *file_off, offset_t *file_len,
-		qfs_lio_handle_t *hdl);
-int qfs_lio_wait(qfs_lio_handle_t *hdl);
-
-#ifdef  __cplusplus
-}
-#endif
-
-#endif /* QFS_LISTIO_H */
+#endif	/* _SAM_FS_LISTIO_H */

@@ -25,17 +25,12 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
 #ifndef _SAM_MIG_H
 #define	_SAM_MIG_H
-
-#ifdef sun
-#pragma ident "$Revision: 1.18 $"
-#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -59,7 +54,7 @@ typedef char  vsn_t[32];
  * media type is 0x8035.
  */
 
-typedef struct {
+typedef struct tp_stage {
 	offset_t    offset;		   /* offset from beginning of file */
 	offset_t    size;			/* size of file to stage in */
 	long long   position;		 /* position from meta data */
@@ -68,11 +63,12 @@ typedef struct {
 	equ_t	fseq;			/* sam-fs file system equment numner */
 	media_t	media_type;		/* sam-fs internal media type */
 	void	*tp_data;		 /* generic pointer for tp use */
-}tp_stage_t;
+} tp_stage_t;
 
 #if !defined(_AML_DEVICE_H)
 #define	DT_THIRD_PARTY  0x8000
-#define	IS_THIRD_PARTY (t) ((t & 0xFF00) == DT_THIRD_PARTY)
+#define	IS_THIRD_PARTY(t) (((t) & 0xFF00) == DT_THIRD_PARTY)
+#define	DT_THIRD_MEDIA 'z'		/* Foreign/third party tape prefix */
 #endif /* !defined _AML_DEVICE_H */
 
 

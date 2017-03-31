@@ -28,18 +28,13 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
 
 #ifndef SAM_DEVSTAT_H
 #define	SAM_DEVSTAT_H
-
-#ifdef sun
-#pragma ident "$Revision: 1.72 $"
-#endif
 
 #ifdef	linux
 
@@ -81,7 +76,7 @@ char *dev_state[] = {
 extern char *dev_state[];
 #endif /* defined(DEC_INIT) */
 
-struct sam_devstat {
+struct sam_devstat {		/* obsolete */
 	ushort_t type;		/* Medium type */
 	char name[32];		/* Device name */
 	char vsn[32];		/* VSN of mounted volume, 31 characters */
@@ -91,7 +86,7 @@ struct sam_devstat {
 	uint_t capacity;	/* Capacity in blocks (1024) */
 };
 
-struct sam_ndevstat {
+struct sam_ndevstat {		/* obsolete */
 	ushort_t type;		/* Medium type */
 	char name[128];		/* Device name */
 	char vsn[32];		/* VSN of mounted volume, 31 characters */
@@ -99,6 +94,16 @@ struct sam_ndevstat {
 	uint_t status;		/* device status */
 	uint_t space;		/* Space left on device */
 	uint_t capacity;	/* Capacity in blocks (1024) */
+};
+
+struct sam_devstatl {
+	ushort_t type;		/* Medium type */
+	char name[128];		/* Device name */
+	char vsn[32];		/* VSN of mounted volume, 31 characters */
+	dstate_t state;		/* State - on/ro/idle/off/down */
+	uint_t status;		/* device status */
+	uint64_t space;		/* Space left on device */
+	uint64_t capacity;	/* Capacity in blocks (1024) */
 };
 
 /* Device status. */
@@ -124,13 +129,16 @@ struct sam_ndevstat {
 
 #define	DVST_STOR_FULL	0x00008000
 #define	DVST_I_E_PORT	0x00004000
-/* Unused		0x00002000 */
+#define	DVST_VERIFYING	0x00002000
 #define	DVST_CLEANING	0x00001000
 
 #define	DVST_POSITION	0x00000800
 #define	DVST_FORWARD	0x00000400
 #define	DVST_WAIT_IDLE	0x00000200
 #define	DVST_FS_ACTIVE	0x00000100
+
+#define	DVST_CANCEL	0x00000004
+#define	DVST_XCOPY	0x00000002
 
 /* Device types */
 #define	DT_CLASS_MASK		0xff00	/* Device class type mask */
@@ -239,11 +247,8 @@ struct sam_ndevstat {
 
 
 /* define non generic (not scsi) tape robots */
-#define	DT_GRAUACI	(DT_TAPE_R | 12)	/* GRAU through aci interface */
 #define	DT_STKAPI	(DT_TAPE_R | 14)	/* STK through api interface */
-#define	DT_IBMATL	(DT_TAPE_R | 17)	/* STK through api interface */
 #define	DT_UNUSED2	(DT_TAPE_R | 23)	/* unused */
-#define	DT_SONYPSC	(DT_TAPE_R | 26)	/* Sony through api interface */
 
 /*
  * Define Pseudo device types.  If a "driver" is required for
@@ -259,6 +264,11 @@ struct sam_ndevstat {
 #define	DT_HISTORIAN	(DT_PSEUDO | 5) /* historian */
 #define	DT_THIRD_PARTY	0x8000		/* third party */
 #define	DT_THIRD_MASK	0x00ff		/* Third party media type mask */
+#define	DT_THIRD_MEDIA	'z'		/* Third party media prefix */
+#define	DT_THIRD_LTFS	'L'		/* LTFS file */
+#define	DT_THIRD_OTFS	'O'		/* Other file system file */
+#define	DT_LTFS_TYPE	"tf"		/* Type string for LTFS media */
+#define	DT_FILESYS_TYPE	"of"		/* Type string for OTFS media */
 
 #ifndef	linux
 #define	DT_UNKNOWN	0x0		/* Unknown device type */
@@ -270,7 +280,12 @@ struct sam_ndevstat {
 #define	is_robot(a)		(((a) & DT_CLASS_MASK) == DT_ROBOT)
 #define	is_tape(a)		(((a) & DT_CLASS_MASK) == DT_TAPE)
 #define	is_tapelib(a)		(((a) & DT_TAPE_R) == DT_TAPE_R)
-#define	is_third_party(a)	(((a) & DT_CLASS_MASK) == DT_THIRD_PARTY)
+#define	is_foreign(a)		(((a) & DT_CLASS_MASK) == DT_THIRD_PARTY)
+#define	is_third_party(a)	(is_foreign(a))
+#define	is_ltfs_media(a)	(is_foreign(a) && \
+				    (((a) & DT_THIRD_MASK) == DT_THIRD_LTFS))
+#define	is_other_filesys(a)	(is_foreign(a) && \
+				    (((a) & DT_THIRD_MASK) == DT_THIRD_OTFS))
 #define	is_stripe_group(a)	(((a) & DT_STRIPE_GROUP_MASK) == \
 				    DT_STRIPE_GROUP)
 #define	is_osd_group(a)		(((a) & DT_CLASS_MASK) == DT_OBJECT_DISK)
@@ -280,6 +295,8 @@ struct sam_ndevstat {
 #define	is_stk5800(a)		((a) == DT_STK5800)
 
 int sam_devstat(ushort_t eq, struct sam_devstat *buf, size_t bufsize);
+int sam_ndevstat(ushort_t eq, struct sam_ndevstat *buf, size_t bufsize);
+int sam_devstatl(ushort_t eq, struct sam_devstatl *buf, size_t bufsize);
 
 #ifdef  __cplusplus
 }

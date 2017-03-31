@@ -29,17 +29,12 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
 #ifndef SAM_CATALOG_H
 #define	SAM_CATALOG_H
-
-#ifdef sun
-#pragma ident "$Revision: 1.16 $"
-#endif
 
 #ifdef  __cplusplus
 extern "C" {
@@ -60,9 +55,8 @@ struct sam_cat_tbl {
 };
 
 /*
- * catalog table entry.
+ * obsolete catalog table entry,
  */
-
 struct sam_cat_ent {
 	uint_t  type;			/* Type of slot */
 	uint_t	status;			/* Catalog entry status */
@@ -76,6 +70,42 @@ struct sam_cat_ent {
 	time_t	modification_time;	/* Last modification time */
 	time_t	mount_time;		/* Last mount time */
 	uchar_t	bar_code[BARCODE_LEN + 1];	/* Bar code (zero filled) */
+};
+
+/*
+ * catalog table entry.
+ */
+struct sam_cat_entl {
+	uint_t	status;			/* Catalog entry status */
+	char	media[4];		/* Media type */
+	char	vsn[32];		/* VSN */
+	int	access;			/* Count of accesses */
+	uint64_t capacity;		/* Capacity of volume */
+	uint64_t space;			/* Space left on volume */
+	uint64_t ptoc_fwa;		/* First word address of PTOC */
+	int	reserved[3];		/* Reserved space */
+	time_t	modification_time;	/* Last modification time */
+	time_t	mount_time;		/* Last mount time */
+	uchar_t	bar_code[BARCODE_LEN + 1];	/* Bar code (zero filled) */
+};
+
+/*
+ * catalog table entry.
+ */
+struct sam_cat_entlv {
+	uint_t	status;			/* Catalog entry status */
+	char	media[4];		/* Media type */
+	char	vsn[32];		/* VSN */
+	int	access;			/* Count of accesses */
+	uint64_t capacity;		/* Capacity of volume */
+	uint64_t space;			/* Space left on volume */
+	uint64_t ptoc_fwa;		/* First word address of PTOC */
+	int	reserved[3];		/* Reserved space */
+	time_t	modification_time;	/* Last modification time */
+	time_t	mount_time;		/* Last mount time */
+	uchar_t	bar_code[BARCODE_LEN + 1];	/* Bar code (zero filled) */
+	time_t	lvtime;			/* DIV Last verified time */
+	uint64_t lvpos;			/* DIV Last verified position */
 };
 
 /* slot type definitions */
@@ -101,6 +131,16 @@ struct sam_cat_ent {
 #define	CSP_UNAVAIL		0x00200000
 #define	CSP_EXPORT		0x00100000
 
+#define	CSP_NONSAM		0x00080000	/* Media is not from sam */
+#define	CSP_DIV			0x00040000	/* Media is DIV */
+#define	CSP_LTFS		0x00020000	/* Media is LTFS volume */
+
+#define	CSP_MIG_SOURCE		0x00000200	/* Migration souce */
+#define	CSP_MIG_DEST		0x00000100	/* Migration destination */
+
+#define	CSP_MIG_COMPLETE	0x00000080	/* Source media migrated */
+#define	CSP_MIG_ERROR		0x00000040	/* Source media migration err */
+
 #define	CS_NEEDS_AUDIT(status)	(((status) & CSP_NEEDS_AUDIT) != 0)
 #define	CS_INUSE(status)	(((status) & CSP_INUSE) != 0)
 #define	CS_LABELED(status)	(((status) & CSP_LABELED) != 0)
@@ -113,11 +153,23 @@ struct sam_cat_ent {
 #define	CS_RECYCLE(status)	(((status) & CSP_RECYCLE) != 0)
 #define	CS_UNAVAIL(status)	(((status) & CSP_UNAVAIL) != 0)
 #define	CS_EXPORT(status)	(((status) & CSP_EXPORT) != 0)
+#define	CS_NONSAM(status)	(((status) & CSP_NONSAM) != 0)
+#define	CS_DIV(status)		(((status) & CSP_DIV) != 0)
+#define	CS_LTFS(status)		(((status) & CSP_LTFS) != 0)
+
+#define	CS_MIG_SRC(status)	(((status) & CSP_MIG_SOURCE) != 0)
+#define	CS_MIG_DEST(status)	(((status) & CSP_MIG_DEST) != 0)
+#define	CS_MIG_COMPLETE(status)	(((status) & CSP_MIG_COMPLETE) != 0)
+#define	CS_MIG_ERROR(status)	(((status) & CSP_MIG_ERROR) != 0)
 
 
 int	sam_opencat(const char *path, struct sam_cat_tbl *buf, size_t bufsize);
 int	sam_getcatalog(int cat_handle, uint_t start_slot, uint_t end_slot,
 		struct sam_cat_ent *buf, size_t entbufsize);
+int	sam_getcatalogl(int cat_handle, uint_t start_slot, uint_t end_slot,
+		struct sam_cat_entl *bufl, size_t entbufsize);
+int	sam_getcataloglv(int cat_handle, uint_t start_slot, uint_t end_slot,
+		struct sam_cat_entlv *buflv, size_t entbufsize);
 int	sam_closecat(int cat_handle);
 
 #ifdef  __cplusplus

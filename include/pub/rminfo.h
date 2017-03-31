@@ -28,23 +28,16 @@
  * CDDL HEADER END
  */
 /*
- * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
+ * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  *    SAM-QFS_notice_end
  */
 #ifndef SAM_RMINFO_H
 #define	SAM_RMINFO_H
 
-#ifdef sun
-#pragma ident "$Revision: 1.20 $"
-#endif
-
-#ifdef	linux
-#include <linux/types.h>
-#else	/* linux */
+#ifndef	linux
 #include <sys/types.h>
-#endif	/* linux */
+#endif
 
 #ifndef SAM_STAT_H
 #include "pub/stat.h"
@@ -129,6 +122,8 @@ struct sam_rminfo {
 #define	RI_foreign	0x0004	/* Open Non SAM tape for read only access */
 #define	RI_nopos    	0x0008	/* For block I/O, 		*/
 				/* don't position media on mount */
+#define	RI_div		0x0010	/* DIV I/O */
+#define	RI_xcopy_io	0x0020	/* XCopy IO dirio */
 
 int sam_readrminfo(const char *path, struct sam_rminfo *buf, size_t bufsize);
 int sam_request(const char *path, struct sam_rminfo *buf, size_t bufsize);
