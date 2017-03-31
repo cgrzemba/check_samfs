@@ -4,7 +4,7 @@ ISA_TARGET := $(shell isainfo -k)
 OS_ARCH := $(OS)_$(OS_REVISION)_$(ISA_TARGET)
 OBJ_BASE := obj
 OBJ_DIR := $(OBJ_BASE)/$(OS_ARCH)
-prefix = /opt/csw
+prefix = /usr
 exec_prefix = $(prefix)
 libexecdir = ${exec_prefix}/libexec/nagios-plugins
 
@@ -13,7 +13,7 @@ SRC = check_samfs.c
 BIN = $(OBJ_DIR)/check_samfs
 
 CFLAGS = -Iinclude
-LDFLAGS = -z ignore -L/opt/SUNWsamfs/lib -lfsmgmt -lcsn -L/usr/sfw/lib -lssl -lcurl -R/opt/SUNWsamfs/lib -R/usr/sfw/lib  -R/usr/lib/fs/samfs
+LDFLAGS = -z ignore -L./lib -lfsmgmt -L/usr/sfw/lib -lssl -lcurl -R/opt/SUNWsamfs/lib -R/usr/sfw/lib  -R/usr/lib/fs/samfs
 
 D_CHECK_OBJDIR = \
 	if [ ! -z "$(BIN)" ]; then \
