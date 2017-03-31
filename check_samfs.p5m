@@ -1,0 +1,7 @@
+set name=pkg.fmri value=pkg:/samqfs/check_samfs@1.0,$(BUILD_VERSION)
+set name=pkg.summary value="faultlog check command for Nagios"
+set name=info.source-url value=https://github.com/cgrzemba/check_samfs
+set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
+
+file obj/SunOS_5.11_sparcv9/check_samfs path=opt/SUNWsamfs/util
+
