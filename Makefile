@@ -13,7 +13,7 @@ SRC = check_samfs.c
 BIN = $(OBJ_DIR)/check_samfs
 
 CFLAGS = -Iinclude
-LDFLAGS = -z ignore -L./lib -lfsmgmt -L/usr/sfw/lib -lssl -lcurl -R/opt/SUNWsamfs/lib -R/usr/sfw/lib  -R/usr/lib/fs/samfs
+LDFLAGS = -z ignore -L/opt/SUNWsamfs/lib -lfsmgmt -lcsn -L/usr/sfw/lib -lssl -lcurl -R/opt/SUNWsamfs/lib -R/usr/sfw/lib  -R/usr/lib/fs/samfs
 
 D_CHECK_OBJDIR = \
 	if [ ! -z "$(BIN)" ]; then \
