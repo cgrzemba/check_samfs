@@ -7,6 +7,7 @@ OBJ_DIR := $(OBJ_BASE)/$(OS_ARCH)
 prefix = @prefix@
 exec_prefix = $(prefix)
 libexecdir = @libexecdir@
+IPSREPO = ~/solaris-userland/sparc/repo
 
 CC=@CC@
 SRC = check_samfs.c
@@ -33,6 +34,10 @@ $(BIN): src/$(SRC)
 install:
 	ginstall -d $(DESTDIR)/$(libexecdir)
 	ginstall -m 755 $(BIN) $(DESTDIR)/$(libexecdir)
+
+pkg:
+	pkgsend publish -s $(IPSREPO) check_samfs.p5m
+	pkgrecv -s $(IPSREPO) -a -d check_samfs.p5p check_samfs
 
 clean:
 	rm -f $(BIN)
