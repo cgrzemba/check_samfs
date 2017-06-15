@@ -1,3 +1,9 @@
+check_samfs knows one command line option [-x "string"]*
+
+With this option it is possible to ignore faults, eg '-x "The uncompressed size of snapshot"', 
+where the the option string is the begining string of the fault message.
+
+
 This project provides a tool to read the SamFS faultlog.bin an reports the activ
 e faults. This tool is intended for use as nrpe plugin.
 
