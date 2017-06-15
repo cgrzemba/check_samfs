@@ -6,14 +6,18 @@ OBJ_BASE := obj
 OBJ_DIR := $(OBJ_BASE)/$(OS_ARCH)
 prefix = @prefix@
 exec_prefix = $(prefix)
-libexecdir = @libexecdir@/nagios-plugins
+libexecdir = @libexecdir@
 
 CC=@CC@
 SRC = check_samfs.c
 BIN = $(OBJ_DIR)/check_samfs
 
 CFLAGS = @samfs_inc@
-LDFLAGS = -z ignore -L/opt/SUNWsamfs/lib -lfsmgmt -lcsn -L/usr/sfw/lib -lssl -lcurl -R/opt/SUNWsamfs/lib -R/usr/sfw/lib  -R/usr/lib/fs/samfs
+SAMLIBDIR = @samfs_lib@
+SAMLIBS = fsmgmt sam samut samcat samfs samapi fsmdb
+
+SSLLIBPATH=$(if $(filter 5.10,$(OS_REVISION)),-L/usr/sfW/lib -lcsn -R/usr/sfW/lib)
+LDFLAGS = -z ignore -L$(SAMLIBDIR) $(foreach l,$(SAMLIBS),-l$l) $(SSLLIBPATH) -lssl -lcurl -R/opt/SUNWsamfs/lib -R/usr/lib/fs/samfs
 
 D_CHECK_OBJDIR = \
 	if [ ! -z "$(BIN)" ]; then \

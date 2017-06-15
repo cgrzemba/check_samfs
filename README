@@ -1,4 +1,5 @@
-This project provides a tool to read the SamFS faultlog.bin an reports the active faults. This tool is intended for use as nrpe plugin.
+This project provides a tool to read the SamFS faultlog.bin an reports the activ
+e faults. This tool is intended for use as nrpe plugin.
 
 Build
 
@@ -9,12 +10,15 @@ $ gmake
 $ gmake install
 
 Be sure that the nagios user can access the fault log! 
-One solution is add the nagios user to group sys:
+e.g create and assign a profile MONITORING to the nagios user with exec_attr:
 
-# usermod -G sys nagios
+MONITORING:suser:cmd:::/opt/SUNWsamfs/util/check_samfs:privs=file_da
+c_read,file_dac_search
 
-add a line in nrpe.cfg like this
-command[check_samfs]=/opt/csw/libexec/nagios-plugins/check_samfs
+if you use nrpe add a line in nrpe.cfg like this
+
+command[check_samfs]=/opt/SUNWsamfs/util/check_samfs
 
 and restart nrpe service
+
 

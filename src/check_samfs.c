@@ -33,83 +33,138 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <ctype.h>
+#include <strings.h>
 
 #include "pub/mgmt/faults.h"
 #include "pub/mgmt/error.h"
 
 #define MSG_BUFF_SIZE 512
+#define MAX_X_PARAMS 256
+char *excludeList[MAX_X_PARAMS];
+char **excludeLptr = excludeList;
+
+void appendExcludeList(char* pattern)
+{
+    char *lptr = NULL;
+    if (*excludeLptr == NULL) {
+        *excludeLptr = pattern;
+        if (excludeLptr < &excludeList[MAX_X_PARAMS])
+            excludeLptr += 1;
+        else {
+            fprintf(stderr, "too many parameters");
+            exit (1);
+        }
+    }           
+}
+
 
 int
-main (int argc,char *argv[])
+main (int argc,char **argv)
 {
-	int ret = 3,fdis;
-	ctx_t ctx_d;
-	int num_critical_faults = 0;
-	int num_major_faults = 0;
-	int num_minor_faults = 0;
-	char log_msg[MSG_BUFF_SIZE];
-        int bufspace = MSG_BUFF_SIZE;
-	int cnt=0;
-	
-	sqm_lst_t		*lst = NULL;
-	node_t 		    *node = NULL;
-	fault_attr_t	*fault_attr = NULL;
-	
+    int ret = 3,fdis;
+    ctx_t ctx_d;
+    int num_critical_faults = 0;
+    int num_major_faults = 0;
+    int num_minor_faults = 0;
+    char log_msg[MSG_BUFF_SIZE];
+    int bufspace = MSG_BUFF_SIZE;
+    int cnt=0;
+    extern char *optarg;
+    extern int optind;
+    int c, i, ignore;
+    
+    sqm_lst_t		*lst = NULL;
+    node_t 		    *node = NULL;
+    fault_attr_t	*fault_attr = NULL;
+    char key[20];
+    char value[256];
+    
+    while ((c = getopt(argc, argv, "x:")) != -1)
+        switch (c){
+          case 'x':
+            appendExcludeList(optarg);
+            break;
+          case '?':
+            if (optopt == 'f')
+              fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+            else if (isprint (optopt))
+              fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+            else
+              fprintf (stderr,
+                       "Unknown option character `\\x%x'.\n",
+                       optopt);
+            return 1;
+          }
+    
+    
+    
     if ((fdis=open(FAULTLOG,O_RDONLY)) < 0) {
         if (errno == ENOENT) { 
-            fprintf(stderr,"no file %s\n",FAULTLOG);
-            return 3;
+            /* clear all faults removes the whole file, so no file is ok */
+            printf( "SamFS Ok - no faults, no file %s\n", FAULTLOG);
+            return (0);
+
         }
         fprintf(stderr,"access %s failed: ",FAULTLOG,errno);perror("");
         return (3);
-	}
-	close(fdis);
- 
-	if (get_all_faults(&ctx_d, &lst) != 0) {
-		/* samerrmsg and samerrno is already populated */
-		fprintf(stderr, "get fault summary failed: %s\n", samerrmsg);
-		return (3);
-	}
-
-	node = lst->head;
-	while (node != NULL) {
-		fault_attr = (fault_attr_t *)node->data;
-		/* count of unacknowledged faults only */
-		if (fault_attr->state == UNRESOLVED) {
-			if (fault_attr->errorType == 0) {
-				/* critical fault */
-				num_critical_faults++;
-			} else if (fault_attr->errorType == 1) {
-				/* major fault */
-				num_major_faults++;
-			} else {
-				/* minor fault */
-				num_minor_faults++;
-			}
+    }
+    close(fdis);
+    
+    if (get_all_faults(&ctx_d, &lst) != 0) {
+        /* samerrmsg and samerrno is already populated */
+        fprintf(stderr, "get fault summary failed: %s\n", samerrmsg);
+        return (3);
+    }
+    
+    node = lst->head;
+    while (node != NULL) {
+        fault_attr = (fault_attr_t *)node->data;
+        node = node->next;
+        /* count of unacknowledged faults only */
+        if (fault_attr->state == UNRESOLVED) {
+            for (i=0; &excludeList[i] < excludeLptr; i++){
+                ignore = 0;
+                if (strncmp(excludeList[i], fault_attr->msg, strlen(excludeList[i])) == 0){
+                    ignore = 1;
+                    break;
+                }
+            }
+            if (ignore) continue;
+            
+            if (fault_attr->errorType == 0) {
+                /* critical fault */
+                num_critical_faults++;
+            } else if (fault_attr->errorType == 1) {
+                /* major fault */
+                num_major_faults++;
+            } else {
+                /* minor fault */
+                num_minor_faults++;
+            }
             if (bufspace > 0) {
                 cnt += snprintf(&log_msg[cnt],bufspace,"[%s] %s; ", fault_attr->compID, fault_attr->msg);
                 bufspace -= cnt;
             }
-		}
-		node = node->next;
-	}
-	lst_free_deep(lst);
-	
-	if ( num_major_faults == 0 && num_minor_faults == 0 &&  num_critical_faults == 0 ){
-	    ret = 0;
-	    printf( "SamFS Ok - no faults\n" );
-	    return (ret);
-	}
-	if ( num_minor_faults > 0){
-	    ret = 1;
-	    printf("SamFS Warning - minor faults=%d; %s\n", num_minor_faults, log_msg);
-	}        
-	if ( num_major_faults > 0 || num_critical_faults > 0 ) {
-	    ret = 2;
-	    printf("SamFS Critical - critical faults=%d; major_faults=%d\n", num_critical_faults, num_major_faults);
-	}
-	return (ret);	 /* 0 ok, 1 warnig, 2 critical, 3 unknown */
-
+        }
+    }
+    lst_free_deep(lst);
+    
+    if ( num_major_faults == 0 && num_minor_faults == 0 &&  num_critical_faults == 0 ){
+        ret = 0;
+        printf( "SamFS Ok - no faults\n" );
+        return (ret);
+    }
+    if ( num_minor_faults > 0){
+        ret = 1;
+        printf("SamFS Warning - minor faults=%d; %s\n", num_minor_faults, log_msg);
+    }        
+    if ( num_major_faults > 0 || num_critical_faults > 0 ) {
+        ret = 2;
+        printf("SamFS Critical - critical faults=%d; major_faults=%d\n", num_critical_faults, num_major_faults);
+    }
+    return (ret);	 /* 0 ok, 1 warnig, 2 critical, 3 unknown */
+    
 }
 
 
