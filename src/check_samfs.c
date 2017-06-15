@@ -72,7 +72,7 @@ main (int argc,char **argv)
     int cnt=0;
     extern char *optarg;
     extern int optind;
-    int c, i, ignore;
+    int c, i, ignore=0;
     
     sqm_lst_t		*lst = NULL;
     node_t 		    *node = NULL;
