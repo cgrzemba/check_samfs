@@ -46,7 +46,6 @@ char **excludeLptr = excludeList;
 
 void appendExcludeList(char* pattern)
 {
-    char *lptr = NULL;
     if (*excludeLptr == NULL) {
         *excludeLptr = pattern;
         if (excludeLptr < &excludeList[MAX_X_PARAMS])
@@ -77,8 +76,6 @@ main (int argc,char **argv)
     sqm_lst_t		*lst = NULL;
     node_t 		    *node = NULL;
     fault_attr_t	*fault_attr = NULL;
-    char key[20];
-    char value[256];
     
     while ((c = getopt(argc, argv, "x:")) != -1)
         switch (c){
@@ -106,7 +103,7 @@ main (int argc,char **argv)
             return (0);
 
         }
-        fprintf(stderr,"access %s failed: ",FAULTLOG,errno);perror("");
+        fprintf(stderr,"access %s failed: %s",FAULTLOG,strerror(errno));perror("");
         return (3);
     }
     close(fdis);

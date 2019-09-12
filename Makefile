@@ -4,17 +4,17 @@ ISA_TARGET := $(shell isainfo -k)
 OS_ARCH := $(OS)_$(OS_REVISION)_$(ISA_TARGET)
 OBJ_BASE := obj
 OBJ_DIR := $(OBJ_BASE)/$(OS_ARCH)
-prefix = @prefix@
+prefix = /opt/SUNWsamfs/sbin
 exec_prefix = $(prefix)
-libexecdir = @libexecdir@
+libexecdir = /opt/SUNWsamfs/util
 IPSREPO = ~/solaris-userland/sparc/repo
 
-CC=@CC@
+CC=/opt/solarisstudio12.4/bin/cc
 SRC = src/check_samfs.c src/ack_samfault.c
 BIN = $(OBJ_DIR)/check_samfs $(OBJ_DIR)/ack_samfaults
 
-CFLAGS = @samfs_inc@ -errwarn=%all -errtags=yes -m32 
-SAMLIBDIR = @samfs_lib@
+CFLAGS = -I./include -errwarn=%all -errtags=yes -m32 
+SAMLIBDIR = ./lib/SunOS_5.11_amd64
 SAMLIBS = fsmgmt sam samut samcat samfs samapi fsmdb
 
 SSLLIBPATH=$(if $(filter 5.10,$(OS_REVISION)),-L/usr/sfW/lib -lcsn -R/usr/sfW/lib)
