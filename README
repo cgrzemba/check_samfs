@@ -27,4 +27,4 @@ command[check_samfs]=/opt/SUNWsamfs/util/check_samfs
 
 and restart nrpe service
 
-
+The tool ack_samfault can list the binary faultlog and acknowledge unresolved faults. For delete faults you can simply remove the faultlog.
