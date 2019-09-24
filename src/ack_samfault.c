@@ -38,6 +38,7 @@
 #include "pub/mgmt/faults.h"
 #include "pub/mgmt/error.h"
 #include "mgmt/util.h"
+#include "sammgmt.h"
 
 #define MSG_BUFF_SIZE 512
 #define MAX_X_PARAMS 256

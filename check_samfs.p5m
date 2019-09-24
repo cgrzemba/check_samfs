@@ -1,7 +1,8 @@
-set name=pkg.fmri value=pkg:/samqfs/check_samfs@1.1
+set name=pkg.fmri value=pkg:/samqfs/check_samfs@1.2
 set name=pkg.summary value="faultlog check command for Nagios"
 set name=info.source-url value=https://github.com/cgrzemba/check_samfs
 set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
 
 file obj/SunOS_5.11_sparcv9/check_samfs path=opt/SUNWsamfs/util/check_samfs owner=root group=bin mode=554
+file obj/SunOS_5.11_sparcv9/ack_samfault path=opt/SUNWsamfs/util/ack_samfault owner=root group=bin mode=554
 

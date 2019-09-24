@@ -158,7 +158,7 @@ main (int argc,char **argv)
     }        
     if ( num_major_faults > 0 || num_critical_faults > 0 ) {
         ret = 2;
-        printf("SamFS Critical - critical faults=%d; major_faults=%d\n", num_critical_faults, num_major_faults);
+        printf("SamFS Critical - critical faults=%d; major_faults=%d; %s\n", num_critical_faults, num_major_faults, log_msg);
     }
     return (ret);	 /* 0 ok, 1 warnig, 2 critical, 3 unknown */
     
