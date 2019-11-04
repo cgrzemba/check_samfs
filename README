@@ -4,8 +4,7 @@ With this option it is possible to ignore faults, eg '-x "The uncompressed size 
 where the the option string is the begining string of the fault message.
 
 
-This project provides a tool to read the SamFS faultlog.bin an reports the activ
-e faults. This tool is intended for use as nrpe plugin.
+This project provides a tool to read the SamFS faultlog.bin an reports the active faults. This tool is intended for use as nrpe plugin.
 
 Build
 
@@ -18,12 +17,13 @@ $ gmake install
 Be sure that the nagios user can access the fault log! 
 e.g create and assign a profile MONITORING to the nagios user with exec_attr:
 
-MONITORING:suser:cmd:::/opt/SUNWsamfs/util/check_samfs:privs=file_da
-c_read,file_dac_search
+    MONITORING:suser:cmd:::/opt/SUNWsamfs/util/check_samfs:privs=file_dac_read,file_dac_search,file_dac_execute
+
+    # usermod -K profile=MONITORING nagios
 
 if you use nrpe add a line in nrpe.cfg like this
 
-command[check_samfs]=/opt/SUNWsamfs/util/check_samfs
+command[check_samfs]=pfexec /opt/SUNWsamfs/util/check_samfs
 
 and restart nrpe service
 
