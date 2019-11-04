@@ -1,13 +1,14 @@
-OS_REVISION := $(shell uname -r)
+OS_REVISION := $(shell uname -v | cut -d. -f1,2)
 OS := $(shell uname -s)
-ISA_TARGET := $(shell isainfo -k)
-OS_ARCH := $(OS)_$(OS_REVISION)_$(ISA_TARGET)
+ELFARCH := $(shell uname -p)
+OS_ARCH := $(OS)_$(OS_REVISION)_$(ELFARCH)
 OBJ_BASE := obj
 OBJ_DIR := $(OBJ_BASE)/$(OS_ARCH)
 prefix = @prefix@
 exec_prefix = $(prefix)
 libexecdir = @libexecdir@
-IPSREPO = ~/solaris-userland/sparc/repo
+IPSREPO ?= ./temp-repo
+DESTDIR ?= ./proto
 
 CC=@CC@
 # SRC = src/check_samfs.c src/ack_samfault.c src/sammgmt.c
@@ -42,11 +43,13 @@ install: $(BIN)
 	$(foreach b, $(BIN), ginstall -m 755 $(b) $(DESTDIR)/$(libexecdir);)
 
 pkg:
-	pkgsend publish -s $(IPSREPO) check_samfs.p5m
+	pkgsend publish -d $(DESTDIR) -s $(IPSREPO) check_samfs.p5m
 	pkgrecv -s $(IPSREPO) -a -d check_samfs.p5p check_samfs
 
 clean:
 	rm -f $(OBJ_DIR)/*
+	rm -rf proto/*
+	rm -f check_samfs.p5p
 
 distclean: clean
 	rm -rf autom4te.cache
